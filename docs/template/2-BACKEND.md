@@ -230,9 +230,9 @@ declare(strict_types=1);
 
 namespace App\Doctrine;
 
-use Doctrine\ORM\Mapping\DefaultNamingStrategy;
+use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 
-class PrefixedNamingStrategy extends DefaultNamingStrategy
+class PrefixedNamingStrategy extends UnderscoreNamingStrategy
 {
     public function __construct(private readonly string $prefix) {}
 
