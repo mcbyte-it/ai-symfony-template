@@ -123,7 +123,18 @@ Create `CLAUDE.md` at the project root with the following content. Use the value
 - In **Plan Mode** (EnterPlanMode), focus on architecture and design decisions — explore the codebase, present options, and wait for approval before writing code.
 - In **implementation** (after plan approval or for simple tasks), focus on clean, direct execution.
 
-## 4. Feature Development Workflow
+## 4. Phase Gates — MANDATORY
+
+After completing **each phase** in `plan-progress.md`:
+
+1. Mark all completed checkboxes with `[x]` in `plan-progress.md`
+2. Print a short summary: what was done, any files created or modified, any decisions made
+3. **STOP. Do not start the next phase.**
+4. Wait for the user to explicitly say to continue (e.g. "continue", "next", "proceed")
+
+Never chain phases together automatically. One phase at a time, always.
+
+## 5. Feature Development Workflow
 
 - When a new feature is requested and the project uses Git:
     1. Create a new branch: `git checkout -b feature/<feature-name>`
@@ -310,12 +321,13 @@ Create (or overwrite) the file `plan-progress.md` inside `docs/`. This is the li
 
 ### Rules for generating this file
 
-- Group steps into named phases that match the actual scope of this project
+- **Infrastructure-first ordering is mandatory.** All setup phases (skeleton, config, git, frontend base, testing setup, CI, prettier) must appear and be completed before any feature/code-generation phases are listed.
 - Only include phases that apply — omit phases for features the user did not choose (e.g. if `USE_TESTING = No`, omit the Testing phase entirely; if `USE_I18N = No`, omit the i18n phase)
 - Every step must have a `[ ]` checkbox
 - Steps already completed during this setup session must be marked `[x]`
 - Each group must have a clear heading and a short one-line description of what the phase delivers
-- Order phases from infrastructure → backend → frontend → quality gates
+- **Feature phases (entities, repositories, controllers, templates) must NOT appear until after all infrastructure phases.** Add a clear separator comment in the file to mark where feature planning begins.
+- Do not generate feature phase content during the setup session — leave a placeholder block and instruct the user to add feature phases after the infrastructure is verified and committed.
 
 ### Required phase structure
 
@@ -340,7 +352,27 @@ _Goal: working repo with CLAUDE.md, memory files, and docs._
 
 ---
 
-## Phase 2: Version Control
+## Phase 2: Backend Skeleton — Symfony + Database
+
+_Goal: running Symfony app connected to MariaDB with prefixed tables, authentication, and base security._
+
+- [x] Initialize Symfony 7.4 skeleton project
+- [x] Install doctrine ORM, DBAL, migrations, security, rate-limiter, twig, apache-pack
+- [x] Configure .env with DATABASE_URL and TABLE_PREFIX=[TABLE_PREFIX]
+- [x] Create PrefixedNamingStrategy and configure doctrine.yaml
+- [x] Create User entity (username, email, password, realName, roles, isActive, failedAttempts, lockedUntil, mustChangePw, createdAt, updatedAt)
+- [x] Create RememberMeToken entity
+- [x] Generate and run initial migration — verify TABLE_PREFIX applied
+- [x] Configure security.yaml (argon2id, form login + CSRF, remember-me 7 days, access control)
+- [x] Configure rate limiter (5 attempts / 15 minutes on login)
+- [x] Create SecurityController (login + logout)
+- [x] Create login Twig template (Bootstrap 5, CSRF, remember-me checkbox)
+- [x] Create app:create-user command
+- [ ] Run security checklist (CSRF, argon2id, rate limiter, parameterized queries, .env in .gitignore)
+
+---
+
+## Phase 3: Version Control
 
 _Goal: git repo with quality gates enforced on every commit._
 
@@ -355,29 +387,40 @@ _Goal: git repo with quality gates enforced on every commit._
 
 ---
 
-## Phase 3: Backend — Symfony + Database
+## Phase 4: Frontend Base
 
-_Goal: running Symfony app connected to MariaDB with prefixed tables._
+_Goal: base layout and UI framework in place; all pages inherit from a single base template._
 
-- [x] Initialize Symfony 7.4 project
-- [x] Install doctrine ORM, DBAL, migrations, security, rate-limiter, twig, apache-pack
-- [x] Configure .env with DATABASE_URL and TABLE_PREFIX=[TABLE_PREFIX]
-- [x] Create PrefixedNamingStrategy and configure doctrine.yaml
-- [x] Create User entity (username, email, password, realName, roles, isActive, failedAttempts, lockedUntil, mustChangePw, createdAt, updatedAt)
-- [x] Create RememberMeToken entity
-- [x] Generate and run initial migration — verify TABLE_PREFIX applied
-- [x] Configure security.yaml (argon2id, form login + CSRF, remember-me 7 days, access control)
-- [x] Configure rate limiter (5 attempts / 15 minutes on login)
-- [x] Create SecurityController (login + logout)
-- [x] Create login Twig template (Bootstrap/AdminLTE, CSRF, remember-me checkbox)
-- [x] Create app:create-user command
-- [ ] Run security checklist (CSRF, argon2id, rate limiter, parameterized queries, .env in .gitignore)
+- [x] Install and configure [FRONTEND_FRAMEWORK]
+- [x] Create base.html.twig with layout, navbar, sidebar, and flash messages
+- [x] Create dashboard placeholder route and template
+- [ ] Verify login page renders correctly with chosen UI framework
+- [ ] Verify layout is responsive on mobile
 
-# --- ADD PROJECT-SPECIFIC BACKEND PHASES BELOW ---
+---
 
-# For each major feature area from 0-PROJECT_DESCRIPTION.md Functional Requirements,
+## Phase 5: Code Quality — Prettier
 
-# create a phase with steps for: Entity, Migration, Repository, Form, Service, Controller, Template, Tests
+_Goal: consistent formatting enforced for JS/CSS/Twig assets._
+
+- [x] Install Prettier and create .prettierrc
+- [x] Configure .prettierignore
+- [ ] Run Prettier on all frontend assets and verify output
+
+---
+
+<!-- ============================================================ -->
+<!-- INFRASTRUCTURE COMPLETE — verify and commit before proceeding -->
+<!-- Do not start feature phases until all phases above are [x]   -->
+<!-- ============================================================ -->
+
+---
+
+# --- FEATURE PHASES — Add one block per Functional Requirement ---
+
+# For each major feature area from 0-PROJECT_DESCRIPTION.md,
+# copy the Phase N template below and fill in the details.
+# Do NOT start implementing these until the infrastructure phases above are done and committed.
 
 ---
 
@@ -461,8 +504,19 @@ _Goal: every push to main triggers automated quality checks._
 - [ ] Confirm coverage report uploaded to SonarQube (if enabled)
 ```
 
+### Placement of conditional phases
+
+Insert conditional phases (i18n, RTL, Testing, CI) **between Phase 5 and the infrastructure-complete separator**, in this order: i18n → RTL → Testing → CI. Do not place them after the feature placeholder.
+
 ### After generating the file
 
 - Mark all steps that were already completed during this session as `[x]`
 - Leave all future feature steps as `[ ]`
-- Tell the user: "Your `plan-progress.md` has been created at the project root. Open it and add one Phase block per feature listed in your Functional Requirements."
+- **Do not generate or fill in any feature Phase N blocks.** Leave the placeholder template as-is.
+- Tell the user:
+
+> **Setup infrastructure is complete.**
+>
+> Your `plan-progress.md` has been created. The infrastructure phases (skeleton, git, frontend base, quality tools) are listed and tracked.
+>
+> **Next step:** Open `plan-progress.md` and add one Phase block per feature listed in your Functional Requirements. When you are ready to start the first feature phase, tell me which phase to begin and I will implement it — one phase at a time, stopping for your review after each one.
