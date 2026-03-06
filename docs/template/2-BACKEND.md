@@ -29,7 +29,10 @@ composer require doctrine/doctrine-bundle
 composer require doctrine/doctrine-migrations-bundle
 composer require doctrine/orm:"^3.0"
 composer require doctrine/dbal:"^4.4"
+composer require symfony/profiler-pack --dev
 ```
+
+The `profiler-pack` installs `WebProfilerBundle`, `DebugBundle`, and `MonologBundle`. Symfony Flex automatically registers them only for the `dev` environment — no manual bundle configuration is required.
 
 Verify installed versions match:
 - `doctrine/orm` >= 3.0
