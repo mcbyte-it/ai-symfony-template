@@ -35,7 +35,6 @@ If the user answers **no**, skip all remaining steps in this file.
 ```bash
 composer require --dev phpunit/phpunit:"^11.5"
 composer require --dev phpstan/phpstan:"^2.0"
-composer require --dev phpstan/extension-installer
 composer require --dev phpstan/phpstan-symfony
 composer require --dev phpstan/phpstan-doctrine
 ```

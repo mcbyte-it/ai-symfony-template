@@ -405,7 +405,7 @@ _Goal: [one sentence describing what this feature delivers to the user]_
 
 _Goal: all UI strings translatable; locale switchable via URL prefix._
 
-- [x] Install symfony/translation and symfony/locale-switcher
+- [x] Install symfony/translation
 - [x] Configure translation.yaml with default locale and fallback
 - [x] Configure URL prefix routing in routes.yaml
 - [x] Create LocaleController with app_switch_locale route

@@ -11,7 +11,9 @@ This prompt sets up the Symfony backend, database, security, and user management
 Run the following commands to create the Symfony 7.4 project:
 
 ```bash
-composer create-project symfony/skeleton:"7.4.*" .
+composer create-project symfony/skeleton:"7.4.*" _tmp
+(shopt -s dotglob; mv _tmp/* .)
+rm -rf _tmp
 ```
 
 Then install required packages:
@@ -45,7 +47,6 @@ Read `USE_I18N`, `I18N_LANGUAGES`, and `USE_RTL` from `0-PROJECT_DESCRIPTION.md`
 
 ```bash
 composer require symfony/translation
-composer require symfony/locale-switcher
 ```
 
 ### Configure the Translation Component

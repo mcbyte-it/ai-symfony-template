@@ -121,7 +121,7 @@ The target user is a freelancer or small agency owner who needs a lightweight al
 - **Multilanguage required:** Yes
 - **Languages:** English (default), Arabic
 - **RTL support required:** Yes — Arabic is a right-to-left language
-- **Symfony translation component:** Yes (`symfony/translation`, `symfony/locale-switcher`)
+- **Symfony translation component:** Yes (`symfony/translation`)
 - **Translation file format:** YAML (`.yaml`) stored in `translations/`
 - **Locale switching:** URL prefix strategy (e.g. `/en/dashboard`, `/ar/dashboard`)
 - **RTL CSS approach:** Bootstrap 5 RTL build (`bootstrap.rtl.min.css`) served when `locale = ar`; AdminLTE also ships an RTL stylesheet
